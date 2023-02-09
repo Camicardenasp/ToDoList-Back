@@ -1,11 +1,25 @@
-const express = require('express')
-const app = express()
-const port = 3000
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+require("dotenv").config();
 
-app.get("/", (req, res) => {
-    res.send("Hola mundo")
-})
+const PORT = 3030;
+const app = express();
 
-app.listen(port, () => {
-    console.log("Mi puerto es " + port)
-})
+const todoRoutes = require("./routes/todoRoutes");
+const connectionOptions = { useUnifiedTopology: true, useNewUrlParser: true };
+
+app.use(express.json());
+app.use(cors());
+
+mongoose.set('strictQuery', false);
+
+mongoose.connect("mongodb://localhost/todolist", connectionOptions)
+    .then(() => console.log("Connected successfully"))
+    .catch((err) => console.error(err));
+
+app.use("/todos", todoRoutes);
+
+app.listen(PORT, () => {
+    console.log("The server is listening on port " + PORT);
+});
